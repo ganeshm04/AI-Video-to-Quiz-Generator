@@ -4,6 +4,8 @@ import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
 import Video from '../models/Video';
 import { VideoService } from '../services/videoService';
+import { authenticateJWT, AuthRequest } from '../middleware/auth';
+import User from '../models/User';
 
 const router = Router();
 const videoService = new VideoService();
@@ -33,16 +35,14 @@ const upload = multer({
   }
 });
 
-// Upload video
-router.post('/upload', upload.single('video'), async (req: Request, res: Response): Promise<void> => {
+// Upload video (authenticated)
+router.post('/upload', authenticateJWT, upload.single('video'), async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     if (!req.file) {
       res.status(400).json({ error: 'No file uploaded' });
       return;
     }
-
     const videoId = uuidv4();
-    
     const video = new Video({
       id: videoId,
       filename: req.file.filename,
@@ -51,17 +51,21 @@ router.post('/upload', upload.single('video'), async (req: Request, res: Respons
       size: req.file.size,
       status: 'uploaded',
       progress: 0,
-      currentStep: 'File uploaded successfully'
+      currentStep: 'uploaded',
+      uploadDate: new Date(),
+      segments: [],
     });
-
     await video.save();
+
+    // Associate video with user
+    await User.findByIdAndUpdate(req.user.id, { $push: { videos: videoId } });
 
     // Start processing in background
    await videoService.processVideo(videoId).catch(console.error);
-   console.log("Video uploaded successfully", videoId,"fuuly completed and saved to db and Processesed from /upload route");
+  //  console.log("Video uploaded successfully", videoId,"fuuly completed and saved to db and Processesed from /upload route");
 
    
-    res.json({
+    res.status(201).json({
       id: videoId,
       message: 'Video uploaded successfully',
       filename: req.file.filename
@@ -72,8 +76,29 @@ router.post('/upload', upload.single('video'), async (req: Request, res: Respons
   }
 });
 
-// Get video status
-router.get('/:id', async (req: Request, res: Response): Promise<void> => {
+// Get all videos uploaded by the authenticated user
+router.get('/my', authenticateJWT, async (req: AuthRequest, res: Response) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      res.status(404).json({ message: 'User not found' });
+      return;
+    }
+    const videosId = await Video.find({ id: { $in: user.videos } });
+
+    const videoNames = videosId.map(video => ({
+      id: video.id,
+      originalName: video.originalName
+    }));
+    res.json(videoNames);
+    return;
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Get video details by ID
+router.get('/:id', authenticateJWT,async (req: Request, res: Response): Promise<void> => {
   try {
     const video = await Video.findOne({ id: req.params.id });
     
@@ -81,7 +106,7 @@ router.get('/:id', async (req: Request, res: Response): Promise<void> => {
       res.status(404).json({ error: 'Video not found' });
       return;
     }
-    console.log("video details", video);
+    // console.log("video details", video);
     res.json(video);
   } catch (error) {
     console.error('Get video error:', error);
@@ -90,7 +115,7 @@ router.get('/:id', async (req: Request, res: Response): Promise<void> => {
 });
 
 // Export quiz data
-router.get('/:id/export', async (req: Request, res: Response): Promise<void> => {
+router.get('/:id/export', authenticateJWT,async (req: Request, res: Response): Promise<void> => {
   try {
     const video = await Video.findOne({ id: req.params.id });
     
@@ -111,12 +136,11 @@ router.get('/:id/export', async (req: Request, res: Response): Promise<void> => 
           duration: video.duration
         },
         segments: video.segments.map(segment => ({
-          id: segment.id,
+         
           startTime: segment.startTime,
           endTime: segment.endTime,
           text: segment.text,
           questions: segment.questions.map(question => ({
-            id: question.id,
             question: question.question,
             options: question.options,
             correctAnswer: question.correctAnswer,
@@ -148,7 +172,7 @@ router.get('/:id/export', async (req: Request, res: Response): Promise<void> => 
 });
 
 // Get all videos
-router.get('/', async (req: Request, res: Response): Promise<void> => {
+router.get('/', authenticateJWT,async (req: Request, res: Response): Promise<void> => {
   try {
     const videos = await Video.find({}).sort({ uploadDate: -1 }).limit(10);
     res.json(videos);

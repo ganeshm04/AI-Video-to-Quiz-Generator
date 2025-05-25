@@ -1,6 +1,7 @@
 // frontend/src/services/api.ts
 import axios from 'axios';
 import type { VideoData, UploadResponse } from '../types';
+import { useEffect, useState } from 'react';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
 
@@ -59,3 +60,33 @@ export const checkHealth = async () => {
   const response = await api.get('/health');
   return response.data;
 };
+
+export function useUserProfileAndVideos(isAuthenticated: boolean) {
+  const [user, setUser] = useState<{ name: string; email: string } | null>(null);
+  const [videos, setVideos] = useState<{ id: string; originalName: string }[]>([]);
+
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    const token = localStorage.getItem('token');
+    if (!token) return;
+    axios.get(`${API_BASE_URL}/auth/profile`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then(res => setUser({ name: res.data.name, email: res.data.email }))
+      .catch(() => setUser(null));
+    axios.get(`${API_BASE_URL}/videos/my`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then(res => {
+        // Ensure each video has id and originalName
+        const mapped = res.data.map((v: { id?: string; _id?: string; originalName?: string; filename?: string }) => ({
+          id: v.id || v._id || '',
+          originalName: v.originalName || v.filename || '',
+        }));
+        setVideos(mapped);
+      })
+      .catch(() => setVideos([]));
+  }, [isAuthenticated]);
+
+  return { user, videos };
+}

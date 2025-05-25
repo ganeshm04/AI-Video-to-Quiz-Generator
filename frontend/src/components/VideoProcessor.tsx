@@ -53,20 +53,23 @@ export const VideoProcessor: React.FC<VideoProcessorProps> = ({ onUploadComplete
     formData.append('video', file);
 
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/videos/upload`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-        onUploadProgress: (progressEvent) => {
-          const percentCompleted = Math.round((progressEvent.loaded * 100) / (progressEvent.total || 1));
-          setStatusText(`Uploading video: ${percentCompleted}%`);
-        },
-      });
-
-      if (response.data.id) {
+      const token = localStorage.getItem('token');
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/videos/upload`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          onUploadProgress: (progressEvent) => {
+            const percentCompleted = Math.round((progressEvent.loaded * 100) / (progressEvent.total || 1));
+            setStatusText(`Uploading video: ${percentCompleted}%`);
+          },
+        }
+      );      if (response.data.id) {
         setVideoId(response.data.id);
         onUploadComplete?.(response.data.id);
-        console.log(response.data.id);
         setStatusText('Processing completed'); // Final status
       }
     } catch (err) {
@@ -92,10 +95,10 @@ export const VideoProcessor: React.FC<VideoProcessorProps> = ({ onUploadComplete
   });
 
   return (
-    <div className="w-full max-w-2xl mx-auto p-6">
+    <div className="w-full max-w-2xl mx-auto p-4 md:p-6">
       <div
         {...getRootProps()}
-        className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors
+        className={`border-2 border-dashed rounded-lg p-4 md:p-8 text-center cursor-pointer transition-colors
           ${isDragActive ? 'border-blue-500 bg-blue-500' : 'border-gray-300 hover:border-blue-400'}
           ${uploading ? 'opacity-50 cursor-not-allowed' : ''}`}
       >
@@ -103,14 +106,14 @@ export const VideoProcessor: React.FC<VideoProcessorProps> = ({ onUploadComplete
         {uploading ? (
           <div className="space-y-4 flex flex-col items-center">
             {/* Spinning Animation */}
-            <div className="w-12 h-12 border-4 border-blue-900 border-t-transparent border-solid rounded-full animate-spin"></div>
+            <div className="w-10 h-10 md:w-12 md:h-12 border-4 border-blue-900 border-t-transparent border-solid rounded-full animate-spin"></div>
             {/* Status Text */}
-            <p className="text-gray-900">{statusText}</p>
+            <p className="text-sm md:text-base text-gray-900">{statusText}</p>
           </div>
         ) : (
           <div className="space-y-4">
             <svg
-              className="mx-auto h-12 w-12 text-gray-400"
+              className="mx-auto h-10 w-10 md:h-12 md:w-12 text-gray-400"
               stroke="currentColor"
               fill="none"
               viewBox="0 0 48 48"
@@ -125,24 +128,26 @@ export const VideoProcessor: React.FC<VideoProcessorProps> = ({ onUploadComplete
             </svg>
             <div className="text-gray-600">
               {isDragActive ? (
-                <p>Drop the video here...</p>
+                <p className="text-sm md:text-base">Drop the video here...</p>
               ) : (
-                <p>
-                  Drag and drop your MP4 video here, or{' '}
-                  <span className="text-blue-500">click to select</span>
-                </p>
+                <div>
+                  <p className="text-sm md:text-base">
+                    Drag and drop your MP4 video here, or{' '}
+                    <span className="text-blue-500">click to select</span>
+                  </p>
+                  <p className="text-xs md:text-sm text-gray-500 mt-2">
+                    Maximum file size: 2GB
+                  </p>
+                </div>
               )}
-              <p className="text-sm text-gray-500 mt-2">
-                Maximum file size: 2GB
-              </p>
             </div>
           </div>
         )}
       </div>
 
       {error && (
-        <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-          <p className="text-red-600">{error}</p>
+        <div className="mt-4 p-3 md:p-4 bg-red-50 border border-red-200 rounded-lg">
+          <p className="text-sm md:text-base text-red-600">{error}</p>
         </div>
       )}
     </div>

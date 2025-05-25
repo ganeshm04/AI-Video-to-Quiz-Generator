@@ -17,7 +17,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = FastAPI(
-    title="AI Services for Video Quiz Generator",
+    title="AI Video to Quiz Generator",
     description="Transcription and Question Generation Services",
     version="1.0.0"
 )

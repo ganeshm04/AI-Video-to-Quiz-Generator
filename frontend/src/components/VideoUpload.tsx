@@ -1,7 +1,7 @@
 // frontend/src/components/VideoUpload.tsx
 import React, { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { Upload, Video, AlertCircle, FileVideo, Info } from 'lucide-react';
+import {  AlertCircle, FileVideo, Info } from 'lucide-react';
 
 interface VideoUploadProps {
   onUpload: (file: File) => void;

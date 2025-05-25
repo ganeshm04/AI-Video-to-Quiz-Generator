@@ -71,7 +71,7 @@ export class VideoService {
 
       // Mark as completed
       await this.updateVideoStatus(videoId, 'completed', 100, 'Processing completed successfully!');
-      console.log(videoId,"this is from videoServices which completes the process");
+      // console.log(videoId,"this is from videoServices which completes the process");
     } catch (error: any) {
       console.error('Video processing error:', error);
       await this.updateVideoStatus(videoId, 'error', 0, `Error: ${error.message}`);

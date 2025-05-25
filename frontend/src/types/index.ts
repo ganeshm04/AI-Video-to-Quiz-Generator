@@ -1,12 +1,15 @@
 export interface VideoData {
-  id: string;
+  _id?: string; // MongoDB ID
+  id: string; // UUID
   filename: string;
   originalName: string;
+  mimetype?: string;
   size: number;
   duration?: number;
   status: 'uploaded' | 'transcribing' | 'processing' | 'completed' | 'error';
   progress: number;
   currentStep: string;
+  uploadDate?: string;
   transcript?: string;
   segments: VideoSegment[];
   errorMessage?: string;

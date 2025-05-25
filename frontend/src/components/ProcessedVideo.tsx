@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Download, FileText, File, Video, Clock, Database, CheckCircle, XCircle, Loader2, AlertCircle } from 'lucide-react';
+import { Download, FileText, File, Video, Clock, Database, CheckCircle, Loader2, AlertCircle } from 'lucide-react';
 
 // Type definitions
 interface Question {
@@ -242,24 +242,26 @@ Correct Answer: ${q.options[q.correctAnswer]}
       <div className="max-w-6xl mx-auto">
         {/* Error Message */}
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">
-            <div className="flex items-center space-x-2">
-              <AlertCircle className="h-5 w-5 text-red-600" />
-              <h3 className="text-sm font-medium text-red-800">Error fetching video data</h3>
+          <div className="bg-red-50 border border-red-200 rounded-xl p-3 sm:p-4 mb-4 sm:mb-6">
+            <div className="flex items-start sm:items-center space-x-2">
+              <AlertCircle className="h-4 w-4 sm:h-5 sm:w-5 text-red-600 mt-0.5 sm:mt-0 flex-shrink-0" />
+              <div className="flex-1 min-w-0">
+                <h3 className="text-xs sm:text-sm font-medium text-red-800">Error fetching video data</h3>
+                <p className="mt-1 text-xs sm:text-sm text-red-700 break-words">{error}</p>
+                <p className="mt-2 text-xs text-red-600">
+                  Make sure your backend server is running on http://localhost:5000 and the video ID is correct.
+                </p>
+              </div>
             </div>
-            <p className="mt-1 text-sm text-red-700">{error}</p>
-            <p className="mt-2 text-xs text-red-600">
-              Make sure your backend server is running on http://localhost:5000 and the video ID is correct.
-            </p>
           </div>
         )}
 
         {/* Loading State */}
         {loading && (
-          <div className="bg-white rounded-xl shadow-lg p-12 mb-6">
-            <div className="flex flex-col items-center justify-center space-y-4">
-              <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
-              <p className="text-gray-600">Fetching video data...</p>
+          <div className="bg-white rounded-xl shadow-lg p-6 sm:p-12 mb-4 sm:mb-6">
+            <div className="flex flex-col items-center justify-center space-y-3 sm:space-y-4">
+              <Loader2 className="h-6 w-6 sm:h-8 sm:w-8 animate-spin text-blue-600" />
+              <p className="text-sm sm:text-base text-gray-600">Fetching video data...</p>
             </div>
           </div>
         )}
@@ -268,34 +270,32 @@ Correct Answer: ${q.options[q.correctAnswer]}
         {!loading && currentVideoData && (
           <>
         {/* Header */}
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center space-x-3">
-              <Video className="h-8 w-8 text-blue-600" />
-              <div>
-                <p className="text-gray-600">File Information</p>
-                <h1 className="text-2xl font-bold text-gray-900">{currentVideoData.originalName}</h1>
+        <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 mb-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6 mb-4">
+            <div className="flex items-center space-x-3 w-full sm:w-auto">
+              <Video className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600 flex-shrink-0" />
+              <div className="min-w-0">
+                <p className="text-sm sm:text-base text-gray-600">File Information</p>
+                <h1 className="text-lg sm:text-2xl font-bold text-gray-900 truncate">{currentVideoData.originalName}</h1>
               </div>
             </div>
-            <div className="flex flex-col space-x-3 border border-2 solid rounded-lg">
-              <div className='items-center m-3 text-xl'>
-              <p>Export Transcript and MCQ's</p>
-              </div>
-              <div className='flex flex-row gap-5 m-auto mb-2'>
-              <button
-                onClick={exportToJSON}
-                className="flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            <div className="flex flex-col w-full sm:w-auto border-2 rounded-lg p-3 sm:p-4 gap-3">
+              <p className="text-base sm:text-lg text-center font-medium text-gray-900">Export Transcript and MCQ's</p>
+              <div className="flex flex-row justify-center gap-3">
+                <button
+                  onClick={exportToJSON}
+                  className="flex items-center justify-center space-x-2 bg-green-600 text-white px-3 py-2 sm:px-4 sm:py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm sm:text-base"
                 >
-                <Download className="h-5 w-5" />
-                <span>JSON</span>
-              </button>
-              <button
-                onClick={exportToPDF}
-                className="flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                  <Download className="h-4 w-4 sm:h-5 sm:w-5" />
+                  <span>JSON</span>
+                </button>
+                <button
+                  onClick={exportToPDF}
+                  className="flex items-center justify-center space-x-2 bg-green-600 text-white px-3 py-2 sm:px-4 sm:py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm sm:text-base"
                 >
-                <File className="h-5 w-5" />
-                <span>TXT</span>
-              </button>
+                  <File className="h-4 w-4 sm:h-5 sm:w-5" />
+                  <span>TXT</span>
+                </button>
               </div>
               
             </div>
@@ -326,18 +326,18 @@ Correct Answer: ${q.options[q.correctAnswer]}
         {/* Tab Navigation */}
         <div className="bg-white rounded-xl shadow-lg mb-6">
           <div className="border-b border-gray-200">
-            <nav className="flex space-x-8 px-6">
+            <nav className="flex flex-wrap gap-2 sm:gap-4 md:gap-8 p-2 sm:p-4 md:px-6">
               {tabConfigs.map(({ id, label, icon: Icon }) => (
                 <button
                   key={id}
                   onClick={() => setActiveTab(id)}
-                  className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm transition-colors ${
+                  className={`flex items-center justify-center space-x-1 sm:space-x-2 py-2 sm:py-3 px-2 sm:px-3 border-b-2 font-medium text-xs sm:text-sm transition-colors min-w-[80px] sm:min-w-[100px] ${
                     activeTab === id
                       ? 'border-blue-500 text-blue-600'
                       : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                   }`}
                 >
-                  <Icon className="h-4 w-4" />
+                  <Icon className="h-3 w-3 sm:h-4 sm:w-4" />
                   <span>{label}</span>
                 </button>
               ))}
@@ -348,38 +348,38 @@ Correct Answer: ${q.options[q.correctAnswer]}
             {/* Overview Tab */}
             {activeTab === 'overview' && (
               <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg p-4 text-white">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                  <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg p-3 sm:p-4 text-white">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-blue-100">File Size</p>
-                        <p className="text-2xl font-bold">{formatFileSize(currentVideoData.size)}</p>
+                        <p className="text-blue-100 text-sm sm:text-base">File Size</p>
+                        <p className="text-lg sm:text-2xl font-bold">{formatFileSize(currentVideoData.size)}</p>
                       </div>
-                      <File className="h-8 w-8 text-blue-200" />
+                      <File className="h-6 w-6 sm:h-8 sm:w-8 text-blue-200" />
                     </div>
                   </div>
                   
-                  <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-lg p-4 text-white">
+                  <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-lg p-3 sm:p-4 text-white">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-green-100">Duration</p>
-                        <p className="text-2xl font-bold">
+                        <p className="text-green-100 text-sm sm:text-base">Duration</p>
+                        <p className="text-lg sm:text-2xl font-bold">
                           {currentVideoData.segments.reduce((total, segment) => total + (segment.endTime - segment.startTime) / 60, 0)} min
                         </p>
                       </div>
-                      <Clock className="h-8 w-8 text-green-200" />
+                      <Clock className="h-6 w-6 sm:h-8 sm:w-8 text-green-200" />
                     </div>
                   </div>
                   
-                  <div className="bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg p-4 text-white">
+                  <div className="bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg p-3 sm:p-4 text-white">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-purple-100">Questions</p>
-                        <p className="text-2xl font-bold">
+                        <p className="text-purple-100 text-sm sm:text-base">Questions</p>
+                        <p className="text-lg sm:text-2xl font-bold">
                           {currentVideoData.segments.reduce((total, segment) => total + segment.questions.length, 0)}
                         </p>
                       </div>
-                      <Database className="h-8 w-8 text-purple-200" />
+                      <Database className="h-6 w-6 sm:h-8 sm:w-8 text-purple-200" />
                     </div>
                   </div>
                 </div>
@@ -412,11 +412,13 @@ Correct Answer: ${q.options[q.correctAnswer]}
             {activeTab === 'transcript' && (
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Video Transcript</h3>
-                <div className="bg-gray-50 rounded-lg p-6 max-h-96 overflow-y-auto space-y-4">
-                  {currentVideoData.segments.map((segment, index) => (
-                    <div key={segment.id} className="border p-4 mb-2 rounded-lg bg-gray-50">
-                      <p className="font-semibold text-gray-800 mb-1">{`${(segment.startTime / 60)} min - ${(segment.endTime / 60)} min`}</p>
-                      <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
+                <div className="bg-gray-50 rounded-lg p-3 sm:p-6 max-h-[50vh] sm:max-h-96 overflow-y-auto space-y-3 sm:space-y-4">
+                  {currentVideoData.segments.map((segment) => (
+                    <div key={segment.id} className="border p-3 sm:p-4 rounded-lg bg-gray-50">
+                      <p className="font-medium sm:font-semibold text-sm sm:text-base text-gray-800 mb-1 sm:mb-2">
+                        {`${(segment.startTime / 60)} min - ${(segment.endTime / 60)} min`}
+                      </p>
+                      <p className="text-sm sm:text-base text-gray-700 leading-relaxed whitespace-pre-wrap">
                         {segment.text}
                       </p>
                     </div>
@@ -432,24 +434,24 @@ Correct Answer: ${q.options[q.correctAnswer]}
                 <div className="space-y-6">
                   {currentVideoData.segments.map((segment) => (
                     <div key={segment.id}>
-                      <h4 className="text-lg font-semibold text-white mb-4 border p-4 mb-2 rounded-lg bg-gray-500">{`Questions for Segment ${(segment.startTime / 60)} min - ${(segment.endTime / 60)} min`}</h4>
-                      <div className="space-y-6">
+                      <h4 className="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4 border p-3 sm:p-4 rounded-lg bg-gray-500">{`Questions for Segment ${(segment.startTime / 60)} min - ${(segment.endTime / 60)} min`}</h4>
+                      <div className="space-y-4 sm:space-y-6">
                         {segment.questions.map((question: Question, index: number) => (
-                          <div key={question.id} className="bg-gray-50 rounded-lg p-6">
-                            <div className="flex items-start justify-between mb-4">
+                          <div key={question.id} className="bg-gray-50 rounded-lg p-4 sm:p-6">
+                            <div className="flex flex-col sm:flex-row sm:items-start justify-between mb-4">
                               <div className="flex-1">
-                                <div className="flex items-center space-x-3 mb-2">
-                                  <span className="bg-blue-100 text-blue-800 text-sm font-medium px-2.5 py-0.5 rounded">
+                                <div className="flex flex-wrap gap-2 mb-2 sm:mb-3">
+                                  <span className="bg-blue-100 text-blue-800 text-xs sm:text-sm font-medium px-2 py-0.5 rounded">
                                     Question {index + 1}
                                   </span>
-                                  <span className={`text-xs font-medium px-2 py-1 rounded ${getDifficultyColor(question.difficulty)}`}>
+                                  <span className={`text-xs sm:text-sm font-medium px-2 py-0.5 rounded ${getDifficultyColor(question.difficulty)}`}>
                                     {question.difficulty}
                                   </span>
-                                  <span className="text-xs text-gray-500 bg-gray-200 px-2 py-1 rounded">
+                                  <span className="text-xs sm:text-sm text-gray-500 bg-gray-200 px-2 py-0.5 rounded">
                                     {question.topic}
                                   </span>
                                 </div>
-                                <h4 className="text-lg font-medium text-gray-900 mb-4">{question.question}</h4>
+                                <h4 className="text-base sm:text-lg font-medium text-gray-900 mb-3 sm:mb-4">{question.question}</h4>
                               </div>
                             </div>
                             
@@ -457,23 +459,23 @@ Correct Answer: ${q.options[q.correctAnswer]}
                               {question.options.map((option: string, optionIndex: number) => (
                                 <div
                                   key={optionIndex}
-                                  className={`p-3 rounded-lg border ${
+                                  className={`p-2 sm:p-3 rounded-lg border ${
                                     optionIndex === question.correctAnswer
                                       ? 'bg-green-300 border-green-200 text-green-800'
                                       : 'bg-white border-gray-200 text-gray-700'
                                   }`}
                                 >
                                   <div className="flex items-center space-x-3">
-                                    <span className={`w-6 h-6 rounded-full flex items-center justify-center text-sm font-medium ${
+                                    <span className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-xs sm:text-sm font-medium ${
                                       optionIndex === question.correctAnswer
                                         ? 'bg-green-100 text-green-800'
                                         : 'bg-gray-100 text-gray-600'
                                     }`}>
                                       {String.fromCharCode(65 + optionIndex)}
                                     </span>
-                                    <span>{option}</span>
+                                    <span className="text-sm sm:text-base">{option}</span>
                                     {optionIndex === question.correctAnswer && (
-                                      <CheckCircle className="h-4 w-4 text-green-600 ml-auto" />
+                                      <CheckCircle className="h-4 w-4 text-green-600 ml-auto flex-shrink-0" />
                                     )}
                                   </div>
                                 </div>

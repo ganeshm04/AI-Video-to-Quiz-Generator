@@ -7,6 +7,8 @@ import './index.css';
 import ProcessedVideo from './components/ProcessedVideo';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useUserProfileAndVideos } from './services/api';
+import WelcomeScreen from './components/WelcomeScreen';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -55,10 +57,12 @@ interface VideoData {
 }
 
 function App() {
-  const [videoId, setVideoId] = useState<string>('ddae44ae-7dd1-4cf6-80b5-e6b701819be3'); // Default ID
+  const [videoId, setVideoId] = useState<string>('ddae44ae-7dd1-4cf6-80b5-e6b701819be3');
   const [videoData, setVideoData] = useState<VideoData | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token'));
+  const { user, videos } = useUserProfileAndVideos(isAuthenticated);
 
   const fetchVideoData = async (videoId: string): Promise<void> => {
     setLoading(true);
@@ -72,7 +76,7 @@ function App() {
       }
 
       const data: VideoData = response.data;
-      console.log(data);
+      // console.log(data);
 
       setVideoData(data);
     } catch (err) {
@@ -90,29 +94,48 @@ function App() {
       fetchVideoData(videoId);
     }
   }, [videoId]);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setIsAuthenticated(false);
+    setVideoData(null);
+  };
+
+  const handleVideoSelect = (videoId: string) => {
+    setVideoId(videoId);
+  };
+
+  // Show welcome screen if not authenticated
+  if (!isAuthenticated) {
+    return <WelcomeScreen onLogin={() => setIsAuthenticated(true)} />;
+  }
+
   return (
     <QueryClientProvider client={queryClient}>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
-        <Header />
-
-        <main className="container mx-auto px-4 py-8">
+        <Header
+          onVideoSelect={handleVideoSelect}
+          onLogout={handleLogout}
+          user={user}
+          videos={videos}
+        />
+        <main className="container mx-auto px-4 py-4 md:py-8 max-w-7xl">
           {!videoData ? (
-            <>
-              <VideoProcessor setVideoId={setVideoId} />
-            </>
+            <VideoProcessor setVideoId={setVideoId} />
           ) : (
-            <>
-            <button className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded" onClick={() => setVideoData(null)}>
+            <div className="space-y-4">
+              <button
+                className="w-full md:w-auto bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
+                onClick={() => setVideoData(null)}
+              >
                 Upload New Video
               </button>
-            <ProcessedVideo videoData={videoData} loading={loading} error={error} />
-            </>
+              <ProcessedVideo videoData={videoData} loading={loading} error={error} />
+            </div>
           )}
         </main>
-
         <Footer />
       </div>
-
       {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
     </QueryClientProvider>
   );
