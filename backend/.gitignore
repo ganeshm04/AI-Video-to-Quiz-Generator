@@ -1,0 +1,12 @@
+.env
+/node_modules/
+/uploads/
+/temp/
+.DS_Store
+*.log
+*.sqlite3
+*.env.*
+*.local
+.idea/
+/dist/
+/coverage/
