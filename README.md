@@ -3,8 +3,6 @@
 ## Project Overview
 An innovative full-stack application that automatically generates interactive quizzes from video lectures using AI. The system transcribes videos, analyzes content, and creates intelligent multiple-choice questions, making learning assessment efficient and engaging.
 
-![Logo](\frontend\public\Aivid2Quiz.png)
-
 ## 🌟 Key Features
 - 🎥 Video lecture upload and processing
 - 🤖 AI-powered transcription using OpenAI's Whisper [local machine]
