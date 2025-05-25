@@ -48,6 +48,8 @@ export const VideoUpload: React.FC<VideoUploadProps> = ({ onUpload, isUploading 
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
+  formatFileSize(2 * 1024 * 1024 * 1024); // Format 2GB for display
+
   return (
     <div className="w-full max-w-4xl mx-auto">
       <div className="card p-8">
