@@ -55,7 +55,7 @@ interface VideoData {
 }
 
 function App() {
-  const [videoId, setVideoId] = useState<string>('ddae44ae-7dd1-4cf6-80b5-e6b701819be3');
+  const [videoId, setVideoId] = useState<string>('');
   const [videoData, setVideoData] = useState<VideoData | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);

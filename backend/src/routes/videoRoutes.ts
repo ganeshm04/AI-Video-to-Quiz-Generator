@@ -98,7 +98,7 @@ router.get('/my', authenticateJWT, async (req: AuthRequest, res: Response) => {
 });
 
 // Get video details by ID
-router.get('/:id', authenticateJWT,async (req: Request, res: Response): Promise<void> => {
+router.get('/:id',async (req: Request, res: Response): Promise<void> => {
   try {
     const video = await Video.findOne({ id: req.params.id });
     
@@ -115,7 +115,7 @@ router.get('/:id', authenticateJWT,async (req: Request, res: Response): Promise<
 });
 
 // Export quiz data
-router.get('/:id/export', authenticateJWT,async (req: Request, res: Response): Promise<void> => {
+router.get('/:id/export',async (req: Request, res: Response): Promise<void> => {
   try {
     const video = await Video.findOne({ id: req.params.id });
     
@@ -172,7 +172,7 @@ router.get('/:id/export', authenticateJWT,async (req: Request, res: Response): P
 });
 
 // Get all videos
-router.get('/', authenticateJWT,async (req: Request, res: Response): Promise<void> => {
+router.get('/',async (req: Request, res: Response): Promise<void> => {
   try {
     const videos = await Video.find({}).sort({ uploadDate: -1 }).limit(10);
     res.json(videos);

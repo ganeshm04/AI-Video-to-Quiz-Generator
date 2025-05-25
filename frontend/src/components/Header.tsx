@@ -72,7 +72,7 @@ export const Header: React.FC<{
           <div className="flex items-center space-x-3">
             <div className="flex items-center justify-center w-10 h-10 md:w-12 md:h-12 bg-blue-100 rounded-lg">
               {/* <Video className="w-5 h-5 md:w-6 md:h-6 text-white" /> */}
-              <img src="..\..\public\Aivid2Quiz.png" alt=""/>
+              <img src="\Aivid2Quiz.png" alt=""/>
             </div>
             <div>
               <h1 className="text-xl md:text-2xl font-bold text-gray-900">
